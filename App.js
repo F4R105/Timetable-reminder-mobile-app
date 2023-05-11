@@ -1,20 +1,37 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import Navigation from './navigators/Navigation';
+
+// CONTEXTS
+import { GlobalContext, GlobalContextProvider } from './contexts/GlobalContext';
+import { ThemeContextProvider } from './contexts/ThemeContext'
+
+// COMPONENTS
+import AppIntro from './components/AppIntro';
+
+const Main = () => {
+  const { isGuest } = useContext(GlobalContext)
+  const [showAppIntro, setShowAppIntro] = useState(null)
+
+  useEffect(()=>{
+    isGuest()
+    .then(res =>{
+      console.log('App.js', 'checking guest', res)
+      setShowAppIntro(false)
+    })
+    .catch(error => console.log(error.message))
+  },[])
+
+  return showAppIntro ? 
+    <AppIntro setShowAppIntro={setShowAppIntro} /> : 
+    <ThemeContextProvider><Navigation /></ThemeContextProvider>
+}
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <GlobalContextProvider>
+      <ThemeContextProvider>
+        <Main />
+      </ThemeContextProvider>
+    </GlobalContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
