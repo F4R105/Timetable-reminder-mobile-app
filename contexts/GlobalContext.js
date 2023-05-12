@@ -11,30 +11,37 @@ export const GlobalContextProvider = ({children}) => {
         timetable: [
             {
                 day: "monday",
+                priority: 3,
                 classes: new Array(0)
             },
             {
                 day: "tuesday",
+                priority: 4,
                 classes: new Array(0)
             },
             {
                 day: "wednesday",
+                priority: 5,
                 classes: new Array(0)
             },
             {
                 day: "thursday",
+                priority: 6,
                 classes: new Array(0)
             },
             {
                 day: "friday",
+                priority: 7,
                 classes: new Array(0)
             },
             {
                 day: "saturday",
+                priority: 1,
                 classes: new Array(0)
             },
             {
                 day: "sunday",
+                priority: 2,
                 classes: new Array(0)
             }
         ]
@@ -90,8 +97,7 @@ export const GlobalContextProvider = ({children}) => {
         }catch(error){
             console.log(error.message)
         }
-      }
-
+    }
 
     const updateStore = async (newStore) => {
         try{
@@ -130,20 +136,31 @@ export const GlobalContextProvider = ({children}) => {
 
     const removeClass = (subject_id) => {
         const updatedClassesArray = store.classes.filter(subject => subject.subject_id !== subject_id)
+        const updatedTimetable = []
+        for(let timetableDay of store.timetable){
+            const updatedTimetableDayClasses = timetableDay.classes.filter(subject => subject.subject_id !== subject_id)
+            timetableDay.classes = updatedTimetableDayClasses
+            updatedTimetable.push(timetableDay)
+        }
         
         const newStore = store
         newStore.classes = updatedClassesArray
+        newStore.timetable = updatedTimetable
         updateStore(newStore)
     }
 
     const addSchedule = ({subject_id, lectureRoom, day, time}) => {
         // 1. get subject information
-        const schedule = store.classes.filter(subject => subject.subject_id == subject_id)[0]
+        const subjectToSchedule = store.classes.filter(subject => subject.subject_id == subject_id)[0]
         
         // 2. add additional information to subject object
-        schedule.lectureRoom = lectureRoom
-        schedule.day = day
-        schedule.time = time
+        const schedule = {
+            ...subjectToSchedule,
+            schedule_id: Math.floor((Math.random() * 10000) + 1),
+            lectureRoom,
+            day,
+            time
+        }
 
         // 3. get stored timetable day that is required by user
         const dayToSchedule = store.timetable.filter(timetableDay => timetableDay.day == day)[0]
@@ -156,6 +173,7 @@ export const GlobalContextProvider = ({children}) => {
 
         // 6. add updated day to timetable
         newTimetable.push(dayToSchedule)
+        newTimetable.sort((prev,item) => prev.priority - item.priority)
 
         // 7. new storage
         const newStore = store
@@ -164,8 +182,17 @@ export const GlobalContextProvider = ({children}) => {
         updateStore(newStore)
     }
 
-    const removeSchedule = ({subject_id, schedule_day}) => {
-        console.log('schedule to remove', {subject_id, schedule_day})
+    const removeSchedule = (schedule_id) => {
+        const updatedTimetable = []
+        for(let timetableDay of store.timetable){
+            const newSchedules = timetableDay.classes.filter(schedule => schedule.schedule_id != schedule_id)
+            timetableDay.classes = newSchedules
+            updatedTimetable.push(timetableDay)
+        }
+
+        const newStore = store
+        newStore.timetable = updatedTimetable
+        updateStore(newStore)
     }
 
     const resetStorage = async () => {
