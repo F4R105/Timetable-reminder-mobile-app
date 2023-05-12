@@ -2,10 +2,10 @@ import { createContext, useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store'
 
 export const GlobalContext = createContext()
+export const SECURE_STORE_KEY = 'timetable_r'
 
 export const GlobalContextProvider = ({children}) => {
     const [store, setStore] = useState(null)
-    const SECURE_STORE_KEY = 'timetable_r'
     const DEFAULT_SECURE_STORE_VALUE = {
         classes: new Array(),
         timetable: [
@@ -88,16 +88,6 @@ export const GlobalContextProvider = ({children}) => {
       
         return {day, date, month, year}
     } 
-
-    const isGuest = async () => {
-        try{
-            const store = await SecureStore.getItemAsync(SECURE_STORE_KEY)
-            if(!store) return true
-            return false
-        }catch(error){
-            console.log(error.message)
-        }
-    }
 
     const updateStore = async (newStore) => {
         try{
@@ -198,7 +188,7 @@ export const GlobalContextProvider = ({children}) => {
     const resetStorage = async () => {
         try{
             await SecureStore.deleteItemAsync(SECURE_STORE_KEY)
-            loadStorage()
+            // loadStorage()
             return "App storage cleared successfully"
         }catch(error){console.log(error.message)}
     }
@@ -208,7 +198,7 @@ export const GlobalContextProvider = ({children}) => {
     },[])
 
     return (
-    <GlobalContext.Provider value={{store, isGuest, getCurrentDate, addClass, removeClass, addSchedule, removeSchedule, resetStorage}}>
+    <GlobalContext.Provider value={{store, getCurrentDate, addClass, removeClass, addSchedule, removeSchedule, resetStorage}}>
         {children}
     </GlobalContext.Provider>
     )
