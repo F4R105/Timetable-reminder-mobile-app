@@ -5,6 +5,7 @@ import {Picker} from '@react-native-picker/picker';
 
 // CONTEXT
 import ThemeContext from '../contexts/ThemeContext'
+import { GlobalContext } from '../contexts/GlobalContext';
 
 // STYLES
 import GlobalStyles from '../styles/global'
@@ -12,6 +13,7 @@ import TimetableModalStyles from '../styles/timetable_modal'
 
 const TimetableModal = ({navigation}) => {
   const { APP_COLORS } = useContext(ThemeContext)
+  const { store, addSchedule } = useContext(GlobalContext)
 
   const [showTimePicker, setShowTimePicker] = useState(false)
   const [timePickerValue, setTimePickerValue] = useState(new Date())
@@ -26,7 +28,7 @@ const TimetableModal = ({navigation}) => {
   const onTimeSelect = (event) => {
     const { timestamp } = event.nativeEvent
     const date = new Date(timestamp)
-    // setTimePickerValue(date)
+    setTimePickerValue(new Date(timestamp))
     const hour = date.getHours().toLocaleString()
     const minute = date.getMinutes().toLocaleString()
     const minutes = (minute < 10) ? `0${minute}` : minute
@@ -58,7 +60,14 @@ const TimetableModal = ({navigation}) => {
                 setSubjectId(itemValue)
               }>
                 <Picker.Item style={{color: APP_COLORS.appSecondaryColor}} label="Select a class" value="null" />
-                <Picker.Item style={{color: APP_COLORS.appSecondaryColor}} label="Example" value="example" />
+                {store.classes.map(subject => (
+                  <Picker.Item 
+                    style={{color: APP_COLORS.appSecondaryColor}} 
+                    label={subject.subject_name} 
+                    value={subject.subject_id} 
+                    key={subject.subject_id}
+                  />
+                ))}
               </Picker>
           </View>
           <View style={TimetableModalStyles.formGroup}>
@@ -90,16 +99,16 @@ const TimetableModal = ({navigation}) => {
           <View style={TimetableModalStyles.formGroup}>
             <Text style={[TimetableModalStyles.label,{color: APP_COLORS.appSecondaryColor}]}>Lecture room</Text>
             <TextInput 
-              style={[TimetableModalStyles.input, { backgroundColor: APP_COLORS.inputColor}]}
+              style={[TimetableModalStyles.input, { backgroundColor: APP_COLORS.inputColor, fontSize: 20}]}
               value={lectureRoom}
               onChangeText={(value) => setLectureRoom(value)}
             />
           </View>
           <TouchableOpacity 
-                      style={[TimetableModalStyles.submitBtn, {backgroundColor: APP_COLORS.appPrimaryColor}]}
-            onPress={async ()=>{
+            style={[TimetableModalStyles.submitBtn, {backgroundColor: APP_COLORS.appPrimaryColor}]}
+            onPress={()=>{
               if(lectureRoom === "" || subjectId === "null" || subjectId === "" || day === "null" || day === "" || time === "Set time") return ToastAndroid.show('Check for empty fields!', ToastAndroid.LONG);
-              await addSchedule({subject_id: subjectId, lectureRoom, day, time})
+              addSchedule({subject_id: subjectId, lectureRoom, day, time})
               navigation.pop()
             }} 
           >

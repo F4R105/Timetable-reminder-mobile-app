@@ -18,7 +18,7 @@ const Empty = ({emptyMessage, buttonText, navigateTo}) => {
                 onPress={()=>navigation.navigate(navigateTo)}
             >
                 <Ionicons name="add" size={24} color={APP_COLORS.appSecondaryColor} />
-                <Text style={HomeStyles.shortcutText}>
+                <Text style={GlobalStyles.emptyText}>
                 {buttonText}
                 </Text>
             </TouchableOpacity>

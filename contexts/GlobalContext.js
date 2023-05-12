@@ -96,46 +96,92 @@ export const GlobalContextProvider = ({children}) => {
     const updateStore = async (newStore) => {
         try{
             await SecureStore.setItemAsync(SECURE_STORE_KEY, JSON.stringify(newStore))
-            setStore(newStore)
+            setStore({...newStore})
+            // console.log('updated store', store)
         }catch(error){
             console.log(error.message)
         }
     }
 
-    const getCurrentStore = async () => {
+    const loadStorage = async () => {
         try{
-            const store = await SecureStore.getItemAsync(SECURE_STORE_KEY)
-            setStore(JSON.parse(store))
+            let userStorage = await SecureStore.getItemAsync(SECURE_STORE_KEY)
+            if(!userStorage){
+                updateStore(DEFAULT_SECURE_STORE_VALUE)
+                return
+            }
+            setStore(JSON.parse(userStorage))
         }catch(error){
             console.log(error.message)
         }
     }
 
-    const addClass = () => {
+    const addClass = ({subject, lecturer}) => {
+        const subjectSchema = {
+            subject_id: Math.floor((Math.random() * 10000) + 1),
+            subject_name: subject,
+            lecturer,
+        }
 
+        const currentStore = store
+        currentStore.classes.push(subjectSchema)
+        updateStore(currentStore)
     }
 
-    const removeClass = () => {
-
+    const removeClass = (subject_id) => {
+        const updatedClassesArray = store.classes.filter(subject => subject.subject_id !== subject_id)
+        
+        const newStore = store
+        newStore.classes = updatedClassesArray
+        updateStore(newStore)
     }
 
-    const addSchedule = () => {
+    const addSchedule = ({subject_id, lectureRoom, day, time}) => {
+        // 1. get subject information
+        const schedule = store.classes.filter(subject => subject.subject_id == subject_id)[0]
+        
+        // 2. add additional information to subject object
+        schedule.lectureRoom = lectureRoom
+        schedule.day = day
+        schedule.time = time
 
+        // 3. get stored timetable day that is required by user
+        const dayToSchedule = store.timetable.filter(timetableDay => timetableDay.day == day)[0]
+        
+        // 4. get all days from stored timetable except day submitted by user
+        const newTimetable = store.timetable.filter(timetableDay => timetableDay.day != day)
+
+        // 5. add created schedule to day obtained at 1
+        dayToSchedule.classes.push(schedule)
+
+        // 6. add updated day to timetable
+        newTimetable.push(dayToSchedule)
+
+        // 7. new storage
+        const newStore = store
+        newStore.timetable = newTimetable
+        
+        updateStore(newStore)
     }
 
-    const removeSchedule = () => {
-
+    const removeSchedule = ({subject_id, schedule_day}) => {
+        console.log('schedule to remove', {subject_id, schedule_day})
     }
 
     const resetStorage = async () => {
         try{
-            await AsyncStorage.deleteItemAsync(SECURE_STORE_KEY)
-            console.log("Async storage cleared")
+            await SecureStore.deleteItemAsync(SECURE_STORE_KEY)
+            loadStorage()
+            return "App storage cleared successfully"
         }catch(error){console.log(error.message)}
     }
 
+    useEffect(()=>{
+        loadStorage()
+    },[])
+
     return (
-    <GlobalContext.Provider value={{store, isGuest, getCurrentDate}}>
+    <GlobalContext.Provider value={{store, isGuest, getCurrentDate, addClass, removeClass, addSchedule, removeSchedule, resetStorage}}>
         {children}
     </GlobalContext.Provider>
     )

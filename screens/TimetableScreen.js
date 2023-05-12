@@ -8,19 +8,25 @@ import GlobalStyles from '../styles/global'
 import TimetableStyles from '../styles/timetable'
 
 // ICONS
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
 
 // CONTEXTS
 import ThemeContext from '../contexts/ThemeContext'
+import { GlobalContext } from '../contexts/GlobalContext'
 
+// COMPONENTS
 import FloatingButton from '../components/FloatingButton'
-
 import Empty from '../components/Empty'
+
 
 const TimetableScreen = () => {
   const { APP_COLORS } = useContext(ThemeContext)
+  const {store, removeSchedule} = useContext(GlobalContext)
+
+  const emptySubjects = () => {
+    if(store.classes.length === 0) return true
+    return false
+  }
 
   return (
     <>
@@ -28,38 +34,68 @@ const TimetableScreen = () => {
       <View style={[GlobalStyles.container, {backgroundColor: APP_COLORS.bgColor}]}>
         <Text style={[{fontSize: 22, fontWeight: "bold"},{color: APP_COLORS.appPrimaryColor}]}>Timetable</Text>
         <Text style={{fontWeight: "bold", fontSize: 15, color: "gray"}}>Your classes schedules</Text>
-        {/* <Empty emptyMessage={"You did not add any subject"} buttonText={"Add subjects"} navigateTo={"classes_stack"}/> */}
-        <ScrollView style={GlobalStyles.contentCardsContainer} showsVerticalScrollIndicator={false}>
-            <Pressable 
-              style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
-            >
-              <View style={{flex: 3}}>
-                <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>Subject</Text>
-                <Text noOfLines={1} style={GlobalStyles.cardLecturer}>Lecturer</Text>
-                <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
-                    <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>Lab 32</Text>
-                </View>
-              </View>
-              <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>10:30</Text>
-              <Pressable
-                onPress={()=>{
-                  Alert.alert(`Remove Class`, `Are you sure you want to remove UUUUUUU?`, [
-                    {
-                      text: "Remove",
-                      onPress: () => console.log('remove item')
-                    },
-                    {
-                      text: "Cancel"
+        {store.classes.length === 0 ? 
+          <Empty emptyMessage={"Add subjects first"} buttonText={"Add subject"} navigateTo={"classes_modal"}/>
+          :
+          <>
+            {
+              store.timetable.filter(timetableDay => {
+                // return days with scheduled classes
+                return timetableDay.classes.length != 0
+              }).length != 0 && store.classes.length != 0 ?
+                <ScrollView style={GlobalStyles.contentCardsContainer} showsVerticalScrollIndicator={false}>
+                  {store.timetable.map(timetableDay => {
+                    if(timetableDay.classes.length != 0){
+                      return (
+                        <View 
+                          style={{ marginBottom: 20}}
+                          key={timetableDay.day}
+                        >
+                          <Text 
+                            style={{textTransform: "uppercase", color: "gray", fontSize: 18, fontWeight: "bold", marginBottom: 10}}
+                          >{timetableDay.day}</Text>
+                          {timetableDay.classes.map(subject => (
+                            <Pressable 
+                              style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
+                              key={subject.subject_id}
+                              >
+                              <View style={{flex: 3}}>
+                                <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
+                                <Text noOfLines={1} style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
+                                <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
+                                    <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>{subject.lectureRoom}</Text>
+                                </View>
+                              </View>
+                              <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>{subject.time}</Text>
+                              <Pressable
+                                onPress={()=>{
+                                  Alert.alert(`Remove Schedule`, `Are you sure you want to remove ${subject.subject_name} from ${subject.day.charAt(0).toUpperCase() + subject.day.slice(1)}?`, [
+                                    {
+                                      text: "Remove",
+                                      onPress: () => removeSchedule({subject_id: subject.subject_id, schedule_day: subject.day})
+                                    },
+                                    {
+                                      text: "Cancel"
+                                    }
+                                  ])                 
+                                }}
+                              >
+                                <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
+                              </Pressable>
+                            </Pressable>                 
+                          ))}
+                        </View>
+                      )
                     }
-                  ])                 
-                }}
-              >
-                <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
-              </Pressable>
-            </Pressable>
-        </ScrollView>
+                  })}
+                </ScrollView>
+                :
+                <Empty emptyMessage={"You did not schedule any of your subjects"} buttonText={"Add schedule"} navigateTo={"timetable_modal"}/>
+            }
+          </>
+        }
       </View>    
-      <FloatingButton navigateTo={"timetable_modal"} />
+      <FloatingButton navigateTo={"timetable_modal"} emptySubjects={emptySubjects} />
     </>
   )
 }

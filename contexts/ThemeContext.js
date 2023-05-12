@@ -7,13 +7,12 @@ export default ThemeContext = createContext()
 export const ThemeContextProvider = ({children}) => {
     const colorScheme = useColorScheme();
     const SECURE_STORE_KEY = 'user_theme_setting'
-    console.log('ThemeContext.js','checking device userColorScheme', colorScheme)
     const [theme, setTheme] = useState(null)
 
     const storeUserThemeSetting = async () => {
         try{
             let userThemeSetting = await SecureStore.getItemAsync(SECURE_STORE_KEY)
-            if(!userThemeSetting) userThemeSetting = await SecureStore.setItemAsync(SECURE_STORE_KEY, 'light')
+            if(!userThemeSetting) userThemeSetting = await SecureStore.setItemAsync(SECURE_STORE_KEY, colorScheme)
             setTheme(userThemeSetting)
         }catch(error){console.log('ThemeContext.js', 'useEffect', error.message)}
     }

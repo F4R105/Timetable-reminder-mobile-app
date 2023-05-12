@@ -47,15 +47,17 @@ export default GlobalStyles = StyleSheet.create({
         gap: 20
     },
     emptyText: {
-        opacity: 0.3,
-        fontSize: 15
+        opacity: 1,
+        fontSize: 15,
+        color: "gray"
     },
     emptyButton: {
         flexDirection: "row",
         alignItems: "center",
         gap: 10,
-        opacity: 0.4,
+        opacity: 1,
         borderWidth: 1,
+        borderColor: "gray",
         padding: 5,
         borderRadius: 5
     }

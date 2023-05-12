@@ -15,7 +15,6 @@ const Main = () => {
   useEffect(()=>{
     isGuest()
     .then(res =>{
-      console.log('App.js', 'checking guest', res)
       setShowAppIntro(false)
     })
     .catch(error => console.log(error.message))

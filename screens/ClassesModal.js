@@ -4,17 +4,18 @@ import { View, Text, TextInput, TouchableOpacity, ToastAndroid} from 'react-nati
 
 // CONTEXT
 import ThemeContext from '../contexts/ThemeContext'
+import { GlobalContext } from '../contexts/GlobalContext'
 
 // STYLES
-import GlobalStyles from '../styles/global'
 import ClassesModalStyles from '../styles/classes_modal'
 
 const ClassesModal = () => {
 
   const { APP_COLORS } = useContext(ThemeContext)
-  const navigation = useNavigation()
+  const { addClass } = useContext(GlobalContext)
   const [subject, setSubject] = useState('')
   const [lecturer, setLecturer] = useState('')
+  const navigation = useNavigation()
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: APP_COLORS.bgColor}}>
@@ -42,7 +43,7 @@ const ClassesModal = () => {
           onPress={async ()=>{
             if(subject === "" || lecturer === "") return ToastAndroid.show('Check for Empty field!', ToastAndroid.LONG);
             try{
-              await addClass(subject, lecturer)
+              await addClass({subject, lecturer})
             }catch(error){console.log(error)}
             navigation.pop()
           }} 

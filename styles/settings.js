@@ -14,6 +14,9 @@ export default SettingsStyles = StyleSheet.create({
     settingText: {
         fontWeight: "bold"
     },
+    settingDescription: {
+        color: "gray"
+    },
     resetSetting: {
         borderRadius: 8,
         paddingHorizontal: 10,
