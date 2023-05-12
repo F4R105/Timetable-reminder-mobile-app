@@ -108,7 +108,11 @@ const TimetableModal = ({navigation}) => {
             style={[TimetableModalStyles.submitBtn, {backgroundColor: APP_COLORS.appPrimaryColor}]}
             onPress={()=>{
               if(lectureRoom === "" || subjectId === "null" || subjectId === "" || day === "null" || day === "" || time === "Set time") return ToastAndroid.show('Check for empty fields!', ToastAndroid.LONG);
-              addSchedule({subject_id: subjectId, lectureRoom, day, time})
+              addSchedule({
+                subject_id: subjectId, 
+                lectureRoom, 
+                day, 
+                time})
               navigation.pop()
             }} 
           >

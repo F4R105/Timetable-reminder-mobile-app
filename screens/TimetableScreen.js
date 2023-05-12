@@ -33,7 +33,7 @@ const TimetableScreen = () => {
       <AppHeader />
       <View style={[GlobalStyles.container, {backgroundColor: APP_COLORS.bgColor}]}>
         <Text style={[{fontSize: 22, fontWeight: "bold"},{color: APP_COLORS.appPrimaryColor}]}>Timetable</Text>
-        <Text style={{fontWeight: "bold", fontSize: 15, color: "gray"}}>Your classes schedules</Text>
+        <Text style={{fontWeight: "bold", fontSize: 15, color: "gray",marginBottom: 10}}>Your classes schedules</Text>
         {store.classes.length === 0 ? 
           <Empty emptyMessage={"Add subjects first"} buttonText={"Add subject"} navigateTo={"classes_modal"}/>
           :
@@ -57,7 +57,7 @@ const TimetableScreen = () => {
                           {timetableDay.classes.map(subject => (
                             <Pressable 
                               style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
-                              key={subject.subject_id}
+                              key={subject.schedule_id}
                               >
                               <View style={{flex: 3}}>
                                 <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
@@ -72,7 +72,7 @@ const TimetableScreen = () => {
                                   Alert.alert(`Remove Schedule`, `Are you sure you want to remove ${subject.subject_name} from ${subject.day.charAt(0).toUpperCase() + subject.day.slice(1)}?`, [
                                     {
                                       text: "Remove",
-                                      onPress: () => removeSchedule({subject_id: subject.subject_id, schedule_day: subject.day})
+                                      onPress: () => removeSchedule(subject.schedule_id)
                                     },
                                     {
                                       text: "Cancel"

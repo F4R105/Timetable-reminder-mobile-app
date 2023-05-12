@@ -8,9 +8,7 @@ import GlobalStyles from '../styles/global'
 import ClassesStyles from '../styles/classes'
 
 // ICONS
-import { Ionicons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
 
 // CONTEXTS
 import ThemeContext from '../contexts/ThemeContext'
@@ -29,7 +27,7 @@ const ClassesScreen = () => {
       <AppHeader />
       <View style={[GlobalStyles.container, {backgroundColor: APP_COLORS.bgColor}]}>
         <Text style={[{fontSize: 22, fontWeight: "bold"},{color: APP_COLORS.appPrimaryColor}]}>Classes</Text>
-        <Text style={{fontWeight: "bold", fontSize: 15, color: "gray"}}>Your subjects / modules</Text>
+        <Text style={{fontWeight: "bold", fontSize: 15, color: "gray", marginBottom: 10}}>Your subjects / modules</Text>
         {store.classes.length === 0 ? 
           <Empty emptyMessage={"You do not have any subject added"} buttonText={"Add subject"} navigateTo={"classes_modal"}/>
           :

@@ -6,7 +6,7 @@ export default GlobalStyles = StyleSheet.create({
         padding: 20
     },
     contentCardsContainer: {
-        paddingVertical: 20,
+        paddingVertical: 20
     },
     contentCard: {
         flexDirection: "row",
