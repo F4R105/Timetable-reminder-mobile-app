@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store'
-import { schedulePushNotification, cancelNotification} from "../Notifications";
+import { schedulePushNotification, cancelNotification, clearNotification} from "../Notifications";
 
 export const GlobalContext = createContext()
 export const SECURE_STORE_KEY = 'timetable_r'
@@ -211,6 +211,7 @@ export const GlobalContextProvider = ({children}) => {
     const resetStorage = async () => {
         try{
             await SecureStore.deleteItemAsync(SECURE_STORE_KEY)
+            await clearNotification()
             loadStorage()
             return "App storage cleared successfully"
         }catch(error){console.log('error while reseting storage', error.message)}

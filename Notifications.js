@@ -38,3 +38,13 @@ export async function cancelNotification(notificationId){
       console.log('all notifications', allnots)
     }catch(error){console.log('notification file, cancelling notificatin', error.message)}
   }
+
+export async function clearNotification(){
+  try{
+    await Notifications.cancelAllScheduledNotificationsAsync()
+    console.log('all notifications cleared successfully')
+
+    const allnots = await Notifications.getAllScheduledNotificationsAsync()
+    console.log('all notifications', allnots)
+  }catch(error){ console.log('notifications file, clearing all notifications', error.message)}
+}
