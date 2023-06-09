@@ -22,12 +22,19 @@ export async function schedulePushNotification(hour, minute, subject, room, lect
         trigger
       });
     
+      const allnots = await Notifications.getAllScheduledNotificationsAsync()
+      console.log('schedulling notification', notificationId)
+      console.log('all notifications', allnots)
       return notificationId
-    }catch(error){console.log(error)}
+    }catch(error){console.log('notifications file, while schedulling', error.message)}
   }
   
 export async function cancelNotification(notificationId){
     try{
       await Notifications.cancelScheduledNotificationAsync(notificationId)
-    }catch(error){console.log(error)}
+
+      const allnots = await Notifications.getAllScheduledNotificationsAsync()
+      console.log('cancelling notification')
+      console.log('all notifications', allnots)
+    }catch(error){console.log('notification file, cancelling notificatin', error.message)}
   }

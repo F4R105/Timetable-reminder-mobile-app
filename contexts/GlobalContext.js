@@ -129,6 +129,15 @@ export const GlobalContextProvider = ({children}) => {
         const updatedClassesArray = store.classes.filter(subject => subject.subject_id !== subject_id)
         const updatedTimetable = []
         for(let timetableDay of store.timetable){
+            // notification
+            const classesToBeDeleted = timetableDay.classes.filter(subject => subject.subject_id == subject_id)
+            if(classesToBeDeleted.length !== 0){
+                for(let schedule of classesToBeDeleted){
+                    cancelNotification(schedule.notification_id).then(res => console.log('schedule', schedule.notification_id, 'cancelled')).catch(error => console.log('cancelling notification in removing class', error))
+                }
+            }
+            // notification
+
             const updatedTimetableDayClasses = timetableDay.classes.filter(subject => subject.subject_id !== subject_id)
             timetableDay.classes = updatedTimetableDayClasses
             updatedTimetable.push(timetableDay)
@@ -140,9 +149,12 @@ export const GlobalContextProvider = ({children}) => {
         updateStore(newStore)
     }
 
-    const addSchedule = ({subject_id, lectureRoom, day, time, notHour, notMinute}) => {
+    const addSchedule = async ({subject_id, lectureRoom, day, time, notHour, notMinute}) => {
         // 1. get subject information
         const subjectToSchedule = store.classes.filter(subject => subject.subject_id == subject_id)[0]
+
+        // schedule notification
+        const notificationId = await schedulePushNotification(notHour, notMinute, subjectToSchedule.subject_name, lectureRoom, subjectToSchedule.lecturer)
         
         // 2. add additional information to subject object
         const schedule = {
@@ -171,17 +183,6 @@ export const GlobalContextProvider = ({children}) => {
         const newStore = store
         newStore.timetable = newTimetable
         updateStore(newStore)
-
-        // 8. schedule notification
-        const notificationId = schedulePushNotification(notHour, notMinute, subjectToSchedule.subject_name, schedule.lectureRoom, schedule.lecturer)
-        .then(
-            notificationId => {
-                console.log('notification scheduled successfully')
-                return notificationId
-            }
-        ).catch(
-            error => console.log(error)
-        )
     }
 
     const removeSchedule = (schedule_id) => {
@@ -191,6 +192,7 @@ export const GlobalContextProvider = ({children}) => {
             // notification
             for(let schedule of timetableDay.classes){
                 if(schedule.schedule_id == schedule_id){
+                    console.log('type of not id', typeof(schedule.notification_id))
                     cancelNotification(schedule.notification_id).then(res => console.log('schedule', schedule.notification_id, 'cancelled')).catch(error => console.log(error))
                 }
             }
@@ -211,7 +213,7 @@ export const GlobalContextProvider = ({children}) => {
             await SecureStore.deleteItemAsync(SECURE_STORE_KEY)
             loadStorage()
             return "App storage cleared successfully"
-        }catch(error){console.log(error.message)}
+        }catch(error){console.log('error while reseting storage', error.message)}
     }
 
     useEffect(()=>{
