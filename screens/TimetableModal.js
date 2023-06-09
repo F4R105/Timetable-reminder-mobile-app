@@ -24,6 +24,10 @@ const TimetableModal = ({navigation}) => {
   const [day, setDay] = useState("")
   const [time, setTime] = useState("Set time")
 
+  // NOTIFICATION
+  const [notHour, setNotHour] = useState("")
+  const [notMinute, setNotMinute] = useState("")
+
 
   const onTimeSelect = (event) => {
     const { timestamp } = event.nativeEvent
@@ -35,6 +39,9 @@ const TimetableModal = ({navigation}) => {
     const time = `${hour}:${minutes}`
     setTime(time)
     setShowTimePicker(false)
+
+    setNotHour(hour)
+    setNotMinute(minute)
   }
 
   return (
@@ -49,7 +56,7 @@ const TimetableModal = ({navigation}) => {
               value={timePickerValue}
               mode="time"
               is24Hour={true}
-              onChange={onTimeSelect}
+              onChange={(e) => onTimeSelect(e)}
             />
           )}
           <View style={TimetableModalStyles.formGroup}>
@@ -91,7 +98,7 @@ const TimetableModal = ({navigation}) => {
             <Text style={[TimetableModalStyles.label,{color: APP_COLORS.appSecondaryColor}]}>Time</Text>
             <Pressable 
               style={[TimetableModalStyles.timepicker, {backgroundColor: APP_COLORS.inputColor}]} 
-              onPressIn={()=>setShowTimePicker(true)}
+              onPress={()=>setShowTimePicker(true)}
             >
               <Text style={{fontSize: 20}}>{time}</Text>
             </Pressable>
@@ -112,7 +119,10 @@ const TimetableModal = ({navigation}) => {
                 subject_id: subjectId, 
                 lectureRoom, 
                 day, 
-                time})
+                time,
+                notHour,
+                notMinute
+              })
               navigation.pop()
             }} 
           >

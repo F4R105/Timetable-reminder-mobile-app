@@ -33,19 +33,20 @@ const HomeScreen = () => {
           :
           <ScrollView style={GlobalStyles.contentCardsContainer} showsVerticalScrollIndicator={false}>
             {store?.timetable.filter(schedule => schedule.day == day.toLowerCase())[0].classes.map(subject => (
-              <Pressable 
-                style={[GlobalStyles.contentCard, {backgroundColor: APP_COLORS.contentCard.bg}]} 
-                key={subject.subject_id}
-              >
-                <View style={{flex: 3}}>
-                  <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
-                  <Text noOfLines={1} style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
-                  <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
-                      <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>{subject.lectureRoom}</Text>
+              <View style={{padding: 8}} key={subject.subject_id}>
+                <Pressable 
+                  style={[GlobalStyles.contentCard, {backgroundColor: APP_COLORS.contentCard.bg}]} 
+                >
+                  <View style={{flex: 3}}>
+                    <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
+                    <Text noOfLines={1} style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
+                    <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
+                        <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>{subject.lectureRoom}</Text>
+                    </View>
                   </View>
-                </View>
-                <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>{subject.time}</Text>
-              </Pressable>
+                  <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>{subject.time}</Text>
+                </Pressable>
+              </View>
             ))}
           </ScrollView>
         }

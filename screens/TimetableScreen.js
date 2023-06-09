@@ -55,20 +55,10 @@ const TimetableScreen = () => {
                             style={{textTransform: "uppercase", color: "gray", fontSize: 18, fontWeight: "bold", marginBottom: 10}}
                           >{timetableDay.day}</Text>
                           {timetableDay.classes.map(subject => (
-                            <Pressable 
-                              style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
-                              key={subject.schedule_id}
-                              >
-                              <View style={{flex: 3}}>
-                                <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
-                                <Text noOfLines={1} style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
-                                <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
-                                    <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>{subject.lectureRoom}</Text>
-                                </View>
-                              </View>
-                              <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>{subject.time}</Text>
-                              <Pressable
-                                onPress={()=>{
+                            <View style={{padding: 8}} key={subject.schedule_id}>
+                              <Pressable 
+                                style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
+                                onLongPress={() => {
                                   Alert.alert(`Remove Schedule`, `Are you sure you want to remove ${subject.subject_name} from ${subject.day.charAt(0).toUpperCase() + subject.day.slice(1)}?`, [
                                     {
                                       text: "Remove",
@@ -77,12 +67,34 @@ const TimetableScreen = () => {
                                     {
                                       text: "Cancel"
                                     }
-                                  ])                 
+                                  ])  
                                 }}
-                              >
-                                <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
+                                >
+                                <View style={{flex: 3}}>
+                                  <Text noOfLines={1} style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
+                                  <Text noOfLines={1} style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
+                                  <View style={[GlobalStyles.cardLectureRoom, {backgroundColor: APP_COLORS.appPrimaryColor}]}>
+                                      <Text noOfLines={1} style={{color: "white", textAlign: "center"}}>{subject.lectureRoom}</Text>
+                                  </View>
+                                </View>
+                                <Text noOfLines={1} style={[GlobalStyles.cardTime, {color: APP_COLORS.appSecondaryColor}]}>{subject.time}</Text>
+                                <Pressable
+                                  onPress={()=>{
+                                    Alert.alert(`Remove Schedule`, `Are you sure you want to remove ${subject.subject_name} from ${subject.day.charAt(0).toUpperCase() + subject.day.slice(1)}?`, [
+                                      {
+                                        text: "Remove",
+                                        onPress: () => removeSchedule(subject.schedule_id)
+                                      },
+                                      {
+                                        text: "Cancel"
+                                      }
+                                    ])                 
+                                  }}
+                                >
+                                  <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
+                                </Pressable>
                               </Pressable>
-                            </Pressable>                 
+                            </View>
                           ))}
                         </View>
                       )

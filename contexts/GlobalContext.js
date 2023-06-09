@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import * as SecureStore from 'expo-secure-store'
+import { schedulePushNotification, cancelNotification} from "../Notifications";
 
 export const GlobalContext = createContext()
 export const SECURE_STORE_KEY = 'timetable_r'
@@ -139,7 +140,7 @@ export const GlobalContextProvider = ({children}) => {
         updateStore(newStore)
     }
 
-    const addSchedule = ({subject_id, lectureRoom, day, time}) => {
+    const addSchedule = ({subject_id, lectureRoom, day, time, notHour, notMinute}) => {
         // 1. get subject information
         const subjectToSchedule = store.classes.filter(subject => subject.subject_id == subject_id)[0]
         
@@ -147,6 +148,7 @@ export const GlobalContextProvider = ({children}) => {
         const schedule = {
             ...subjectToSchedule,
             schedule_id: Math.floor((Math.random() * 10000) + 1),
+            notification_id: notificationId,
             lectureRoom,
             day,
             time
@@ -168,13 +170,32 @@ export const GlobalContextProvider = ({children}) => {
         // 7. new storage
         const newStore = store
         newStore.timetable = newTimetable
-        
         updateStore(newStore)
+
+        // 8. schedule notification
+        const notificationId = schedulePushNotification(notHour, notMinute, subjectToSchedule.subject_name, schedule.lectureRoom, schedule.lecturer)
+        .then(
+            notificationId => {
+                console.log('notification scheduled successfully')
+                return notificationId
+            }
+        ).catch(
+            error => console.log(error)
+        )
     }
 
     const removeSchedule = (schedule_id) => {
         const updatedTimetable = []
+
         for(let timetableDay of store.timetable){
+            // notification
+            for(let schedule of timetableDay.classes){
+                if(schedule.schedule_id == schedule_id){
+                    cancelNotification(schedule.notification_id).then(res => console.log('schedule', schedule.notification_id, 'cancelled')).catch(error => console.log(error))
+                }
+            }
+            // notification end\
+            
             const newSchedules = timetableDay.classes.filter(schedule => schedule.schedule_id != schedule_id)
             timetableDay.classes = newSchedules
             updatedTimetable.push(timetableDay)
@@ -188,7 +209,7 @@ export const GlobalContextProvider = ({children}) => {
     const resetStorage = async () => {
         try{
             await SecureStore.deleteItemAsync(SECURE_STORE_KEY)
-            // loadStorage()
+            loadStorage()
             return "App storage cleared successfully"
         }catch(error){console.log(error.message)}
     }

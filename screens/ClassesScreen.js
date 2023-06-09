@@ -33,16 +33,10 @@ const ClassesScreen = () => {
           :
           <ScrollView style={GlobalStyles.contentCardsContainer} showsVerticalScrollIndicator={false}>
             {store.classes.map(subject => (
-              <Pressable 
-                key={subject.subject_id}
-                style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
-              >
-                <View>
-                  <Text style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
-                  <Text style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
-                </View>
-                <Pressable
-                  onPress={()=>{
+              <View style={{padding: 8}} key={subject.subject_id}>
+                <Pressable 
+                  style={[GlobalStyles.contentCard, {backgroundColor:  APP_COLORS.contentCard.bg}]} 
+                  onLongPress={() => {
                     Alert.alert(`Remove ${subject.subject_name}`, `Are you sure you want to remove ${subject.subject_name} from classes?`, [
                       {
                         text: "Remove",
@@ -51,12 +45,30 @@ const ClassesScreen = () => {
                       {
                         text: "Cancel"
                       }
-                    ])                 
+                    ])
                   }}
                 >
-                  <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
+                  <View>
+                    <Text style={[GlobalStyles.cardSubject, {color: APP_COLORS.appSecondaryColor}]}>{subject.subject_name}</Text>
+                    <Text style={GlobalStyles.cardLecturer}>{subject.lecturer}</Text>
+                  </View>
+                  <Pressable
+                    onPress={()=>{
+                      Alert.alert(`Remove ${subject.subject_name}`, `Are you sure you want to remove ${subject.subject_name} from classes?`, [
+                        {
+                          text: "Remove",
+                          onPress: () => removeClass(subject.subject_id)
+                        },
+                        {
+                          text: "Cancel"
+                        }
+                      ])                 
+                    }}
+                  >
+                    <MaterialIcons name="delete-forever" size={24} color="#db7a7a" />
+                  </Pressable>
                 </Pressable>
-              </Pressable>
+              </View>
             ))}
           </ScrollView>
         }

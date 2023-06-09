@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "timetable_reminder_v3",
-    "slug": "timetable_reminder_v3",
-    "version": "1.0.0",
+    "name": "Timetable reminder",
+    "slug": "timetable_reminder",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#dbf8efff"
+      "backgroundColor": "#0f7f62ff"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.faraji.timetable_reminder"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f646d35f-7c3c-42e2-87f7-4cf2bb8da9ae"
+      }
     }
   }
 }
